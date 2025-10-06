@@ -63,7 +63,7 @@ function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Te conectamos 
+                Te 
               </motion.p>
               <motion.div 
                 className="hero-buttons"
