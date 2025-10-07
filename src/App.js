@@ -63,7 +63,7 @@ function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Te 
+                Te conectas con tus dispositivos desde cualquier lugar, en cualquier momento.
               </motion.p>
               <motion.div 
                 className="hero-buttons"
@@ -72,7 +72,7 @@ function App() {
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
                 <button className="btn-primary">Descargar Ahora</button>
-                <button className="btn-secondary">Comenzar Prueba Empresarial</button>
+                <button className="btn-secondary">Comenzar Prueba</button>
               </motion.div>
             </div>
             <motion.div 
