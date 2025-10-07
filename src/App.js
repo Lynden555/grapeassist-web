@@ -56,14 +56,14 @@ function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                Asistencia Remota Segura 
+                🚀 Asistencia Remota Segura 🚀
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Te conectas con tus dispositivos
+                Te conectas con tus dispositivos de forma rápida y segura, estés donde estés 🚀
               </motion.p>
               <motion.div 
                 className="hero-buttons"
