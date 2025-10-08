@@ -41,7 +41,9 @@ function App() {
           </ul>
           <div className="nav-buttons">
             <button className="btn-login">Iniciar Sesión</button>
-            <button className="btn-primary">Descargar</button>
+            <button className="btn-primary" onClick={() => window.open('/download/windows', '_blank')}>
+              Descargar
+            </button>
           </div>
         </nav>
       </header>
@@ -71,7 +73,9 @@ function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                <button className="btn-primary">Descargar Ahora</button>
+                <button className="btn-primary" onClick={() => window.open('/download/windows', '_blank')}>
+                  Descargar Ahora
+                </button>
                 <button className="btn-secondary">Comenzar Prueba</button>
               </motion.div>
             </div>
@@ -207,7 +211,9 @@ function App() {
           <h2>¿Listo para Comenzar?</h2>
           <p>Descarga GrapeAssist hoy y experimenta la diferencia</p>
           <div className="download-buttons">
-            <button className="btn-primary large">Descargar Ahora</button>
+          <button className="btn-primary large" onClick={() => window.open('/download/windows', '_blank')}>
+            Descargar Ahora
+          </button>
           </div>
         </div>
       </section>
