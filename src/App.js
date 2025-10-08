@@ -63,7 +63,7 @@ function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Te conectas de forma segura y eficiente.
+               Asistencia remota profesional al instante, solo $9.99 USD
               </motion.p>
               <motion.div 
                 className="hero-buttons"
@@ -170,10 +170,10 @@ function App() {
                 <div className="price">$9.99<span>/mes</span></div>
               </div>
               <ul className="features-list">
-                <li>✅ 5 conexiones simultáneas</li>
+                <li>✅ 10 Licencias</li>
                 <li>✅ Soporte básico</li>
                 <li>✅ Encriptación estándar</li>
-                <li>✅ Hasta 10 dispositivos</li>
+                <li>✅ 3 Conexiones Simultaneas</li>
                 <li>❌ Soporte prioritario</li>
                 <li>❌ Funciones empresariales</li>
               </ul>
@@ -187,10 +187,10 @@ function App() {
                 <div className="price">$29.99<span>/mes</span></div>
               </div>
               <ul className="features-list">
-                <li>✅ Conexiones ilimitadas</li>
+                <li>✅ 20 Licencias</li>
                 <li>✅ Soporte premium 24/7</li>
                 <li>✅ Encriptación avanzada</li>
-                <li>✅ Dispositivos ilimitados</li>
+                <li>✅ 6 Conexiones Simultaneas</li>
                 <li>✅ Soporte prioritario</li>
                 <li>✅ Todas las funciones</li>
               </ul>
