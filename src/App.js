@@ -56,14 +56,14 @@ function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                Asistencia Remota Segura 🚀
+                Asistencia Remota Segura
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-               Asistencia remota profesional al instante, solo $9.99 USD
+                Asistencia Remota Profesional al Instante, solo <span style={{color: '#FF4500'}}>$9.99 USD</span>
               </motion.p>
               <motion.div 
                 className="hero-buttons"

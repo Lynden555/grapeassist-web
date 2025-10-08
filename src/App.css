@@ -166,22 +166,21 @@ body {
 }
 
 .hero-text h1 {
-  font-size: 3.2rem;
+  font-size: 3.8rem; /* ← Más grande (antes 3.2rem) */
   font-weight: 800;
   margin-bottom: 1.5rem;
-  line-height: 1.3; /* ← CAMBIADO de 1.1 a 1.3 */
+  line-height: 1.3;
   background: linear-gradient(135deg, #6A0DAD 0%, #00C853 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-family: 'Segoe UI', Tahoma, sans-serif;
-  /* Prevenir cortes */
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
 .hero-text p {
-  font-size: 1.3rem;
+  font-size: 1.8rem; /* ← Más grande (antes 1.3rem) */
   color: #666666;
   margin-bottom: 2.5rem;
   font-weight: 500;
