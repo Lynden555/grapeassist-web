@@ -96,49 +96,120 @@ export const useWebRTC = () => {
 
   // ---------- WEBSOCKET (TU FLUJO ORIGINAL) ----------
   const ensureWebSocket = useCallback(() => {
-  const handleSignalingMessage = async (data) => {
-    switch (data.type) {
-      case "joined":
-        log("✅ Unido a la sesión - Esperando pantalla del agente...");
-        setStatus("pending");
-        break;
-
-      case "peer-joined":
-        log("👤 Agente conectado - Esperando oferta...");
-        break;
-
-      case "offer":
-        log("📥 Oferta recibida del agente - Procesando...");
-        await handleOffer(data.offer);
-        break;
-
-      case "ice-candidate":
-        if (data.candidate && pcRef.current && data.role === "agent") {
-          try {
-            await pcRef.current.addIceCandidate(data.candidate);
-            
-          } catch (err) {
-            console.warn("Error añadiendo ICE candidate:", err);
-          }
-        }
-        break;
-
-      case "error":
-        log(`❌ Error: ${data.message}`);
-        break;
-
-      default:
-        console.log("⚠️ Mensaje no manejado:", data.type);
-    }
-  };
-
-    
-  if (wsRef.current) {
+    if (wsRef.current) {
       try { wsRef.current.close(); } catch {}
     }
 
     log("📡 Conectando al servidor...");
     const ws = new WebSocket(SIGNALING_URL);
+
+    // 🆕 MOVIDO DENTRO: handleOffer
+    const handleOffer = async (offer) => {
+      if (!pcRef.current) {
+        log("❌ Conexión WebRTC no inicializada");
+        return;
+      }
+
+      try {
+        log("📥 Estableciendo oferta remota...");
+        await pcRef.current.setRemoteDescription(new RTCSessionDescription(offer));
+        log("✅ Oferta establecida - Creando respuesta...");
+
+        const dataChannel = pcRef.current.createDataChannel('remoteControl', {
+          ordered: true,
+          maxPacketLifeTime: 3000
+        });
+
+        dataChannelRef.current = dataChannel;
+        
+        dataChannel.onopen = () => {
+          log('✅ Canal de control remoto (iniciado) listo');
+          setControlEnabled(true);
+        };
+
+        dataChannel.onclose = () => {
+          log('🔌 Canal de control remoto cerrado');
+          setControlEnabled(false);
+        };
+
+        dataChannel.onerror = (error) => {
+          log(`❌ Error en canal de control: ${error}`);
+          setControlEnabled(false);
+        };
+
+        dataChannel.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'resolution') {
+              setScreenResolution({
+                width: data.width,
+                height: data.height
+              });
+              log(`📏 Resolución detectada: ${data.width}x${data.height}`);
+            }
+          } catch (error) {
+            console.error('Error procesando mensaje:', error);
+          }
+        };
+
+        const answer = await pcRef.current.createAnswer();
+        await pcRef.current.setLocalDescription(answer);
+
+        wsRef.current.send(JSON.stringify({
+          type: "answer",
+          answer: answer,
+          code: codeRef.current,
+          role: "technician"
+        }));
+        
+        log("✅ Respuesta enviada al agente");
+        setStatus("connected");
+
+      } catch (error) {
+        log(`❌ Error procesando oferta: ${error.message}`);
+      }
+    };
+
+    // 🆕 MOVIDO DENTRO: handleSignalingMessage
+    const handleSignalingMessage = async (data) => {
+      try {
+        switch (data.type) {
+          case "joined":
+            log("✅ Unido a la sesión - Esperando pantalla del agente...");
+            setStatus("pending");
+            break;
+
+          case "peer-joined":
+            log("👤 Agente conectado - Esperando oferta...");
+            break;
+
+          case "offer":
+            log("📥 Oferta recibida del agente - Procesando...");
+            await handleOffer(data.offer);
+            break;
+
+          case "ice-candidate":
+            if (data.candidate && pcRef.current && data.role === "agent") {
+              try {
+                await pcRef.current.addIceCandidate(data.candidate);
+                
+              } catch (err) {
+                console.warn("Error añadiendo ICE candidate:", err);
+              }
+            }
+            break;
+
+          case "error":
+            log(`❌ Error: ${data.message}`);
+            break;
+
+          default:
+            console.log("⚠️ Mensaje no manejado:", data.type);
+        }
+      } catch (error) {
+        log(`❌ Error procesando mensaje: ${error.message}`);
+      }
+    };
 
     ws.onopen = () => {
       log("✅ Conectado al servidor");
@@ -176,74 +247,6 @@ export const useWebRTC = () => {
 
     wsRef.current = ws;
   }, [log]);
-
-
-
-  const handleOffer = async (offer) => {
-    if (!pcRef.current) {
-      log("❌ Conexión WebRTC no inicializada");
-      return;
-    }
-
-    try {
-      log("📥 Estableciendo oferta remota...");
-      await pcRef.current.setRemoteDescription(new RTCSessionDescription(offer));
-      log("✅ Oferta establecida - Creando respuesta...");
-
-      const dataChannel = pcRef.current.createDataChannel('remoteControl', {
-        ordered: true,
-        maxPacketLifeTime: 3000
-      });
-
-      dataChannelRef.current = dataChannel;
-      
-      dataChannel.onopen = () => {
-        log('✅ Canal de control remoto (iniciado) listo');
-        setControlEnabled(true);
-      };
-
-      dataChannel.onclose = () => {
-        log('🔌 Canal de control remoto cerrado');
-        setControlEnabled(false);
-      };
-
-      dataChannel.onerror = (error) => {
-        log(`❌ Error en canal de control: ${error}`);
-        setControlEnabled(false);
-      };
-
-      dataChannel.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'resolution') {
-            setScreenResolution({
-              width: data.width,
-              height: data.height
-            });
-            log(`📏 Resolución detectada: ${data.width}x${data.height}`);
-          }
-        } catch (error) {
-          console.error('Error procesando mensaje:', error);
-        }
-      };
-
-      const answer = await pcRef.current.createAnswer();
-      await pcRef.current.setLocalDescription(answer);
-
-      wsRef.current.send(JSON.stringify({
-        type: "answer",
-        answer: answer,
-        code: codeRef.current,
-        role: "technician"
-      }));
-      
-      log("✅ Respuesta enviada al agente");
-      setStatus("connected");
-
-    } catch (error) {
-      log(`❌ Error procesando oferta: ${error.message}`);
-    }
-  };
 
   // ---------- CONEXIÓN CON LICENCIAS ----------
   const connectToSession = useCallback(async (code, userId) => {
@@ -380,8 +383,7 @@ export const useWebRTC = () => {
     controlEnabled,
     connectToSession,
     closeSession,
-    sendCommand,
-    setControlEnabled
+    sendCommand
   };
 };
 
