@@ -54,28 +54,7 @@ function LandingPage() {
     setAuthType('login');
   };
 
-  // Función para crear sesión demo (sin login)
-  const createDemoSession = async () => {
-    try {
-      const response = await fetch('https://grapeassist-backend-production.up.railway.app/remote/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({})
-      });
 
-      const data = await response.json();
-      
-      if (data.ok) {
-        alert(`✅ Sesión demo creada!\nCódigo: ${data.code}\n\nComparte este código con el técnico.`);
-      } else {
-        alert('❌ Error creando sesión: ' + data.error);
-      }
-    } catch (error) {
-      alert('❌ Error de conexión');
-    }
-  };
 
   return (  
     <div className="App">

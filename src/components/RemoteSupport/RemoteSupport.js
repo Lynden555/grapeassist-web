@@ -47,7 +47,6 @@ const RemoteSupport = () => {
     connectToSession,
     closeSession,
     sendCommand,
-    setControlEnabled
   } = useWebRTC();
 
   const {
@@ -261,10 +260,6 @@ const RemoteSupport = () => {
     }
   };
 
-  const exitFullView = () => {
-    setIsFullView(false);
-    document.body.style.overflow = 'auto';
-  };
 
   return (
     <div className="remote-support-container">

@@ -96,7 +96,44 @@ export const useWebRTC = () => {
 
   // ---------- WEBSOCKET (TU FLUJO ORIGINAL) ----------
   const ensureWebSocket = useCallback(() => {
-    if (wsRef.current) {
+  const handleSignalingMessage = async (data) => {
+    switch (data.type) {
+      case "joined":
+        log("✅ Unido a la sesión - Esperando pantalla del agente...");
+        setStatus("pending");
+        break;
+
+      case "peer-joined":
+        log("👤 Agente conectado - Esperando oferta...");
+        break;
+
+      case "offer":
+        log("📥 Oferta recibida del agente - Procesando...");
+        await handleOffer(data.offer);
+        break;
+
+      case "ice-candidate":
+        if (data.candidate && pcRef.current && data.role === "agent") {
+          try {
+            await pcRef.current.addIceCandidate(data.candidate);
+            
+          } catch (err) {
+            console.warn("Error añadiendo ICE candidate:", err);
+          }
+        }
+        break;
+
+      case "error":
+        log(`❌ Error: ${data.message}`);
+        break;
+
+      default:
+        console.log("⚠️ Mensaje no manejado:", data.type);
+    }
+  };
+
+    
+  if (wsRef.current) {
       try { wsRef.current.close(); } catch {}
     }
 
@@ -140,41 +177,7 @@ export const useWebRTC = () => {
     wsRef.current = ws;
   }, [log]);
 
-  const handleSignalingMessage = async (data) => {
-    switch (data.type) {
-      case "joined":
-        log("✅ Unido a la sesión - Esperando pantalla del agente...");
-        setStatus("pending");
-        break;
 
-      case "peer-joined":
-        log("👤 Agente conectado - Esperando oferta...");
-        break;
-
-      case "offer":
-        log("📥 Oferta recibida del agente - Procesando...");
-        await handleOffer(data.offer);
-        break;
-
-      case "ice-candidate":
-        if (data.candidate && pcRef.current && data.role === "agent") {
-          try {
-            await pcRef.current.addIceCandidate(data.candidate);
-            
-          } catch (err) {
-            console.warn("Error añadiendo ICE candidate:", err);
-          }
-        }
-        break;
-
-      case "error":
-        log(`❌ Error: ${data.message}`);
-        break;
-
-      default:
-        console.log("⚠️ Mensaje no manejado:", data.type);
-    }
-  };
 
   const handleOffer = async (offer) => {
     if (!pcRef.current) {
