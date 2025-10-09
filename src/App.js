@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Link } from 'react-scroll';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './pages/Dashboard';
 import './App.css';
 
 // Componente de animación personalizado
@@ -23,16 +27,65 @@ const AnimatedSection = ({ children, delay = 0 }) => {
   );
 };
 
-function App() {
-  return (
+// Componente Landing Page
+function LandingPage() {
+  const [showAuth, setShowAuth] = useState(false);
+  const [authType, setAuthType] = useState('login');
+
+  const openLogin = () => {
+    setAuthType('login');
+    setShowAuth(true);
+  };
+
+  const openRegister = () => {
+    setAuthType('register');
+    setShowAuth(true);
+  };
+
+  const closeAuth = () => {
+    setShowAuth(false);
+  };
+
+  const switchToRegister = () => {
+    setAuthType('register');
+  };
+
+  const switchToLogin = () => {
+    setAuthType('login');
+  };
+
+  // Función para crear sesión demo (sin login)
+  const createDemoSession = async () => {
+    try {
+      const response = await fetch('https://grapeassist-backend-production.up.railway.app/remote/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+      });
+
+      const data = await response.json();
+      
+      if (data.ok) {
+        alert(`✅ Sesión demo creada!\nCódigo: ${data.code}\n\nComparte este código con el técnico.`);
+      } else {
+        alert('❌ Error creando sesión: ' + data.error);
+      }
+    } catch (error) {
+      alert('❌ Error de conexión');
+    }
+  };
+
+  return (  
     <div className="App">
       {/* Header con Botón Inicio */}
       <header className="header">
         <nav className="navbar container">
-<div className="logo">
-  <img src="/uva.png" alt="GrapeAssist Logo" className="logo-icon" />
-  GrapeAssist
-</div>
+          <div className="logo">
+            <img src="/uva.png" alt="GrapeAssist Logo" className="logo-icon" />
+            GrapeAssist
+          </div>
           <ul className="nav-links">
             <li><Link to="hero" smooth={true} duration={500}>Inicio</Link></li>
             <li><Link to="solutions" smooth={true} duration={500}>Soluciones</Link></li>
@@ -40,7 +93,9 @@ function App() {
             <li><Link to="download" smooth={true} duration={500}>Descargar</Link></li>
           </ul>
           <div className="nav-buttons">
-            <button className="btn-login">Iniciar Sesión</button>
+            <button className="btn-login" onClick={openLogin}>
+              Iniciar Sesión
+            </button>
             <button className="btn-primary" onClick={() => window.open('/download/windows', '_blank')}>
               Descargar
             </button>
@@ -48,7 +103,7 @@ function App() {
         </nav>
       </header>
 
-      {/* Hero Section con ID para el scroll */}
+      {/* Hero Section */}
       <section id="hero" className="hero">
         <div className="container">
           <div className="hero-content">
@@ -76,8 +131,10 @@ function App() {
                 <button className="btn-primary" onClick={() => window.open('/download/windows', '_blank')}>
                   Descargar Ahora
                 </button>
-                <button className="btn-secondary">Comenzar Prueba</button>
-              </motion.div>
+              <button className="btn-secondary" onClick={openRegister}>
+                Comenzar Prueba
+              </button>
+            </motion.div>
             </div>
             <motion.div 
               className="hero-image"
@@ -204,7 +261,6 @@ function App() {
         </div>
       </section>
 
-
       {/* Sección Descarga Final MODIFICADA */}
       <section id="download" className="download-cta">
         <div className="container">
@@ -224,7 +280,29 @@ function App() {
           <p>&copy; 2024 GrapeAssist. Todos los derechos reservados.</p>
         </div>
       </footer>
+
+      {/* Modal de Autenticación */}
+      {showAuth && (
+        authType === 'login' ? 
+          <Login onClose={closeAuth} onSwitchToRegister={switchToRegister} /> 
+          : 
+          <Register onClose={closeAuth} onSwitchToLogin={switchToLogin} />
+      )}
     </div>
+  );
+}
+
+// Componente App principal con rutas
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<LandingPage />} />
+        <Route path="/register" element={<LandingPage />} />
+      </Routes>
+    </Router>
   );
 }
 
