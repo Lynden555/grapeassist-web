@@ -38,11 +38,11 @@ function LandingPage() {
     setShowAuth(true);
   };
 
-  const openRegister = () => {
-    setAuthType('register');
-    setRegisterType(type);
-    setShowAuth(true);
-  };
+const openRegister = (type = 'trial') => {
+  setAuthType('register');
+  setRegisterType(type);
+  setShowAuth(true);
+};
 
   const closeAuth = () => {
     setShowAuth(false);
