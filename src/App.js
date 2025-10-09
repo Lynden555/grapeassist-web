@@ -48,10 +48,6 @@ const openRegister = (type = 'trial') => {
     setShowAuth(false);
   };
 
-  const switchToRegister = () => {
-    setAuthType('register');
-  };
-
   const switchToLogin = () => {
     setAuthType('login');
   };
