@@ -31,6 +31,7 @@ const AnimatedSection = ({ children, delay = 0 }) => {
 function LandingPage() {
   const [showAuth, setShowAuth] = useState(false);
   const [authType, setAuthType] = useState('login');
+  const [registerType, setRegisterType] = useState('trial');
 
   const openLogin = () => {
     setAuthType('login');
@@ -39,6 +40,7 @@ function LandingPage() {
 
   const openRegister = () => {
     setAuthType('register');
+    setRegisterType(type);
     setShowAuth(true);
   };
 
@@ -217,7 +219,12 @@ function LandingPage() {
                 <li>❌ Soporte prioritario</li>
                 <li>❌ Funciones empresariales</li>
               </ul>
-              <button className="pricing-btn">Comenzar</button>
+              <button 
+                className="pricing-btn"
+                onClick={() => openRegister('plan')} // 🆕 Pasar 'plan'
+              >
+                Comenzar
+              </button>
             </div>
 
             <div className="pricing-card pro">
@@ -234,7 +241,12 @@ function LandingPage() {
                 <li>✅ Soporte prioritario</li>
                 <li>✅ Todas las funciones</li>
               </ul>
-              <button className="pricing-btn primary">Comenzar</button>
+              <button 
+                className="pricing-btn primary"
+                onClick={() => openRegister('plan')} // 🆕 Pasar 'plan'
+              >
+                Comenzar
+              </button>
             </div>
           </div>
         </div>
@@ -260,13 +272,17 @@ function LandingPage() {
         </div>
       </footer>
 
-      {/* Modal de Autenticación */}
-      {showAuth && (
-        authType === 'login' ? 
-          <Login onClose={closeAuth} onSwitchToRegister={switchToRegister} /> 
-          : 
-          <Register onClose={closeAuth} onSwitchToLogin={switchToLogin} />
-      )}
+          {/* Modal de Autenticación */}
+          {showAuth && (
+            authType === 'login' ? 
+              <Login onClose={closeAuth} onSwitchToRegister={() => openRegister('trial')} /> 
+              : 
+              <Register 
+                onClose={closeAuth} 
+                onSwitchToLogin={switchToLogin}
+                registerType={registerType} // 🆕 PROP NUEVA
+              />
+          )}
     </div>
   );
 }

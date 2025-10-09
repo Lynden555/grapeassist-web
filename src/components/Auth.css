@@ -178,3 +178,148 @@
     font-size: 1.3rem;
   }
 }
+
+/* 🆕 AGREGA ESTO AL FINAL DE TU Auth.css ACTUAL */
+
+/* Estilos para Selección de Planes en Register */
+.plan-selection-content {
+  max-width: 800px;
+  width: 90%;
+}
+
+.plan-selection {
+  padding: 20px;
+}
+
+.plan-selection-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.plan-selection-header h3 {
+  color: #7e22ce;
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+}
+
+.plan-selection-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.plan-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.plan-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.plan-card:hover {
+  border-color: #7e22ce;
+  transform: translateY(-5px);
+}
+
+.plan-card.pro {
+  border-color: #7e22ce;
+  position: relative;
+  background: linear-gradient(135deg, #faf5ff, #ffffff);
+}
+
+.plan-header h4 {
+  color: #374151;
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #7e22ce;
+  margin-bottom: 20px;
+}
+
+.price span {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 25px 0;
+  text-align: left;
+}
+
+.plan-features li {
+  padding: 8px 0;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.plan-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background: #7e22ce;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.plan-btn:hover:not(:disabled) {
+  background: #6b21a8;
+}
+
+.plan-btn.primary {
+  background: #10b981;
+}
+
+.plan-btn.primary:hover:not(:disabled) {
+  background: #059669;
+}
+
+.plan-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.skip-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background: transparent;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.skip-btn:hover {
+  border-color: #7e22ce;
+  color: #7e22ce;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .plan-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .plan-selection-content {
+    width: 95%;
+    margin: 10px;
+  }
+}
