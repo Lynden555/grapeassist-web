@@ -70,9 +70,32 @@ const openRegister = (type = 'trial') => {
             <li><Link to="download" smooth={true} duration={500}>Descargar</Link></li>
           </ul>
           <div className="nav-buttons">
-            <button className="btn-login" onClick={openLogin}>
-              Iniciar Sesión
-            </button>
+            {(() => {
+              const userData = localStorage.getItem('grape_user');
+              const token = localStorage.getItem('grape_token');
+              
+              if (userData && token) {
+                const user = JSON.parse(userData);
+                return (
+                  <div className="user-welcome">
+                    <span className="welcome-text">Hola, {user.name}</span>
+                    <button 
+                      className="btn-primary" 
+                      onClick={() => window.location.href = '/dashboard'}
+                    >
+                      Entrar
+                    </button>
+                  </div>
+                );
+              } else {
+                return (
+                  <button className="btn-login" onClick={openLogin}>
+                    Iniciar Sesión
+                  </button>
+                );
+              }
+            })()}
+            {/* Botón Descargar siempre visible */}
             <button className="btn-primary" onClick={() => window.open('/download/windows', '_blank')}>
               Descargar
             </button>
@@ -227,7 +250,7 @@ const openRegister = (type = 'trial') => {
               <div className="pricing-badge">MÁS POPULAR</div>
               <div className="pricing-header">
                 <h3>Pro</h3>
-                <div className="price">$29.99<span>/mes</span></div>
+                <div className="price">$19.99<span>/mes</span></div>
               </div>
               <ul className="features-list">
                 <li>✅ 20 Licencias</li>

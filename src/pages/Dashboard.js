@@ -27,53 +27,36 @@ const Dashboard = () => {
     loadUserData(userObj.id);
   }, []);
 
-  const loadUserData = async (userId) => {
-    try {
-      setLoading(true);
-      
-      // Cargar límites del usuario
-      const limitsResponse = await fetch(`${API_BASE}/user/limits/${userId}`);
-      const limitsData = await limitsResponse.json();
-      
-      if (limitsData.ok) {
-        setUserLimits(limitsData.user);
-      }
-
-      // Cargar historial de sesiones
-      try {
-        const historyResponse = await fetch(`${API_BASE}/user/sessions/${userId}`);
-        const historyData = await historyResponse.json();
-        
-        if (historyData.ok && historyData.sessions) {
-          setSessionHistory(historyData.sessions);
-        }
-      } catch (historyError) {
-        console.log('El endpoint de historial no está disponible aún');
-        // Usar datos de ejemplo temporalmente
-        setSessionHistory([
-          {
-            id: 1,
-            date: '2024-01-15T14:30:00Z',
-            duration: '25 min',
-            status: 'completed',
-            clientCode: 'ABC123'
-          },
-          {
-            id: 2,
-            date: '2024-01-14T10:15:00Z',
-            duration: '18 min',
-            status: 'completed',
-            clientCode: 'DEF456'
-          }
-        ]);
-      }
-
-    } catch (error) {
-      console.error('Error cargando datos:', error);
-    } finally {
-      setLoading(false);
+const loadUserData = async (userId) => {
+  try {
+    setLoading(true);
+    
+    // Cargar límites del usuario
+    const limitsResponse = await fetch(`${API_BASE}/user/limits/${userId}`);
+    const limitsData = await limitsResponse.json();
+    
+    if (limitsData.ok) {
+      setUserLimits(limitsData.user);
     }
-  };
+
+    // Cargar historial de sesiones REAL
+    const historyResponse = await fetch(`${API_BASE}/user/sessions/${userId}`);
+    const historyData = await historyResponse.json();
+    
+    if (historyData.ok) {
+      setSessionHistory(historyData.sessions || []);
+    } else {
+      console.error('Error cargando historial:', historyData.error);
+      setSessionHistory([]);
+    }
+
+  } catch (error) {
+    console.error('Error cargando datos:', error);
+    setSessionHistory([]); // En caso de error, mostrar lista vacía
+  } finally {
+    setLoading(false);
+  }
+};
 
   const startRemoteSession = async () => {
     if (!user || !userLimits) return;
@@ -120,11 +103,54 @@ const Dashboard = () => {
     setShowUpgradeModal(false);
   };
 
-  const handleUpgradePlan = (planType) => {
-    // Aquí integrarás con Stripe - mismo flujo que tu página principal
-    console.log('Mejorar a plan:', planType);
-    // window.location.href = `/pricing?plan=${planType}`;
-  };
+const handleUpgradePlan = async (planType) => {
+  try {
+    setLoading(true);
+    
+    // TEMPORAL: Usando productIds - después cambia por priceIds
+    let priceId;
+    switch (planType) {
+      case 'basic':
+        priceId = 'price_1SGSBtIDytpi2VvnWLca0CdE'; // ← Cambiar por price_... cuando lo tengas
+        break;
+      case 'pro':
+        priceId = 'price_1SGSFUIDytpi2VvnRZK6qhen'; // ← Cambiar por price_... cuando lo tengas
+        break;
+      default:
+        throw new Error('Plan no válido');
+    }
+
+    const response = await fetch(`${API_BASE}/stripe/create-checkout-session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        priceId: priceId,
+        userId: user.id,
+        customerEmail: user.email,
+        successUrl: `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${window.location.origin}/dashboard`
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.ok) {
+      window.location.href = data.url;
+    } else {
+      console.error('Error creando sesión:', data.error);
+      alert('Error al procesar la solicitud: ' + data.error);
+    }
+
+  } catch (error) {
+    console.error('Error en upgrade:', error);
+    alert('Error al conectar con el servidor');
+  } finally {
+    setLoading(false);
+    closeUpgradeModal();
+  }
+};
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -234,9 +260,6 @@ const Dashboard = () => {
               </div>
               
               <div className="modal-actions">
-                <button onClick={closeUpgradeModal} className="cancel-btn">
-                  Cerrar
-                </button>
               </div>
             </div>
           </div>
@@ -250,25 +273,20 @@ const Dashboard = () => {
               <img src="/uva.png" alt="GrapeAssist" />
               <span>GrapeAssist</span>
             </div>
-            <div className="dashboard-user">
-              <div className="user-plan-info">
-                <span className="welcome-text">Hola, {user.name}</span>
-                <span className={`plan-badge ${user.planType}`}>
-                  Plan: {user.planType.toUpperCase()}
-                </span>
-                {(user.planType === 'demo' || user.planType === 'basic') && (
-                  <button 
-                    className="improve-plan-btn"
-                    onClick={() => setShowUpgradeModal(true)}
-                  >
-                    Mejorar Plan
-                  </button>
-                )}
-              </div>
-              <button onClick={logout} className="btn-logout">
-                Cerrar Sesión
-              </button>
-            </div>
+<div className="dashboard-user">
+  <span>Hola, {user.name}</span>
+  {(user.planType === 'demo' || user.planType === 'basic') && (
+    <button 
+      className="improve-plan-btn"
+      onClick={() => setShowUpgradeModal(true)}
+    >
+      Mejorar Plan
+    </button>
+  )}
+  <button onClick={logout} className="btn-logout">
+    Cerrar Sesión
+  </button>
+</div>
           </div>
         </div>
       </header>
@@ -277,28 +295,28 @@ const Dashboard = () => {
         <div className="container">
           <div className="dashboard-welcome">
             <h1>Panel de Control Técnico</h1>
-            <div className="plan-info">
-              <span className={`plan-badge ${user.planType}`}>
-                Plan: {user.planType.toUpperCase()}
-              </span>
-              {userLimits && (
-                <span className="connections-counter">
-                  {userLimits.planType === 'demo' ? (
-                    <>Conexiones demo: {userLimits.trialUsed || 0}/3</>
-                  ) : (
-                    <>Conexiones activas: {userLimits.activeConnections || 0}</>
-                  )}
-                </span>
-              )}
-              {(user.planType === 'demo' || user.planType === 'basic') && (
-                <button 
-                  className="improve-plan-btn secondary"
-                  onClick={() => setShowUpgradeModal(true)}
-                >
-                  Mejorar Plan
-                </button>
-              )}
-            </div>
+<div className="plan-info">
+  <span className={`plan-badge ${user.planType}`}>
+    Plan: {user.planType.toUpperCase()}
+  </span>
+  {userLimits && (
+    <span className="connections-counter">
+      {userLimits.planType === 'demo' ? (
+        <>Conexiones demo: {userLimits.trialUsed || 0}/3</>
+      ) : (
+        <>Conexiones activas: {userLimits.activeConnections || 0}</>
+      )}
+    </span>
+  )}
+  {(user.planType === 'demo' || user.planType === 'basic') && (
+    <button 
+      className="improve-plan-btn secondary"
+      onClick={() => setShowUpgradeModal(true)}
+    >
+      Mejorar Plan
+    </button>
+  )}
+</div>
           </div>
 
           {/* Navegación de pestañas */}
