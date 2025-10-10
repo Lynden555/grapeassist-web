@@ -805,3 +805,299 @@
     width: 100%;
   }
 }
+/* ===== NUEVOS ESTILOS PARA MEJORAR PLAN ===== */
+
+/* Botón Mejorar Plan en Header */
+.user-plan-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.welcome-text {
+  color: #666;
+  font-weight: 500;
+}
+
+.improve-plan-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.improve-plan-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.improve-plan-btn.secondary {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+}
+
+.improve-plan-btn.secondary:hover {
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+}
+
+/* Modal Mejorar Plan Unificado */
+.upgrade-message {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.upgrade-message p {
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.upgrade-message p:first-child {
+  font-size: 1.3rem;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.upgrade-message p:last-child {
+  font-size: 1rem;
+  color: #718096;
+}
+
+/* Cards de Planes Mejorados */
+.plans-comparison {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.plan-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.plan-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.plan-card:hover::before {
+  opacity: 1;
+}
+
+.plan-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.plan-card.featured {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%);
+  transform: scale(1.05);
+  border-width: 3px;
+}
+
+.plan-card.featured::before {
+  opacity: 1;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+.plan-card.featured:hover {
+  transform: scale(1.05) translateY(-8px);
+  box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
+}
+
+.plan-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+}
+
+.plan-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.plan-header h4 {
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.plan-price {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #667eea;
+  margin-bottom: 0;
+}
+
+.plan-card.featured .plan-price {
+  color: #48bb78;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  text-align: left;
+}
+
+.plan-features li {
+  padding: 0.8rem 0;
+  color: #4a5568;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #f8f9fa;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plan-features li:last-child {
+  border-bottom: none;
+}
+
+.plan-features li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #48bb78;
+  flex-shrink: 0;
+}
+
+.plan-features li:has(❌)::before {
+  background: #e53e3e;
+}
+
+.plan-select-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.plan-select-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.plan-select-btn.primary {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+}
+
+.plan-select-btn.primary:hover {
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+}
+
+/* Header del Modal Mejorado */
+.modal-header h3 {
+  color: #667eea;
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive para nuevos elementos */
+@media (max-width: 768px) {
+  .user-plan-info {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+  
+  .improve-plan-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .plans-comparison {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .plan-card.featured {
+    transform: none;
+  }
+  
+  .plan-card.featured:hover {
+    transform: translateY(-8px);
+  }
+  
+  .plan-header h4 {
+    font-size: 1.2rem;
+  }
+  
+  .plan-price {
+    font-size: 1.6rem;
+  }
+  
+  .plan-features li {
+    font-size: 0.9rem;
+    padding: 0.6rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-user {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+  
+  .improve-plan-btn {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+  }
+  
+  .plan-card {
+    padding: 1.5rem;
+  }
+}
