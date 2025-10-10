@@ -120,6 +120,12 @@ const Dashboard = () => {
     setShowUpgradeModal(false);
   };
 
+  const handleUpgradePlan = (planType) => {
+    // Aquí integrarás con Stripe - mismo flujo que tu página principal
+    console.log('Mejorar a plan:', planType);
+    // window.location.href = `/pricing?plan=${planType}`;
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', {
@@ -168,52 +174,66 @@ const Dashboard = () => {
   // Vista normal del dashboard
   return (
     <div className="dashboard">
-      {/* Modal de Actualización */}
+      {/* Modal de Mejorar Plan Unificado */}
       {showUpgradeModal && (
         <div className="modal-overlay">
           <div className="upgrade-modal">
             <div className="modal-header">
-              <h3>🚫 Límite Alcanzado</h3>
+              <h3>🚀 Mejorar Plan</h3>
               <button onClick={closeUpgradeModal} className="modal-close-btn">×</button>
             </div>
             <div className="modal-content">
-              <div className="limit-message">
-                <p>Has alcanzado el límite de tu plan actual.</p>
-                <p><strong>Actualiza tu plan para continuar brindando asistencia:</strong></p>
+              <div className="upgrade-message">
+                <p>Desbloquea todo el potencial de GrapeAssist</p>
+                <p><strong>Elige el plan perfecto para tus necesidades:</strong></p>
               </div>
               
-                <div className="plans-comparison">
-                  <div className="plan-card">
+              <div className="plans-comparison">
+                <div className="plan-card">
+                  <div className="plan-header">
                     <h4>Plan Básico</h4>
                     <div className="plan-price">$9.99/mes</div>
-                    <ul>
-                      <li>✅ 10 Licencias</li>
-                      <li>✅ Soporte básico</li>
-                      <li>✅ Encriptación estándar</li>
-                      <li>✅ 3 Conexiones Simultáneas</li>
-                      <li>❌ Soporte prioritario</li>
-                      <li>❌ Funciones empresariales</li>
-                    </ul>
                   </div>
-                  
-                  <div className="plan-card featured">
+                  <ul className="plan-features">
+                    <li>✅ 3 Conexiones Simultáneas</li>
+                    <li>✅ Hasta 10 Licencias</li>
+                    <li>✅ Soporte Básico</li>
+                    <li>✅ Encriptación Estándar</li>
+                    <li>❌ Soporte Prioritario</li>
+                    <li>❌ Funciones Empresariales</li>
+                  </ul>
+                  <button 
+                    className="plan-select-btn"
+                    onClick={() => handleUpgradePlan('basic')}
+                  >
+                    Elegir Básico
+                  </button>
+                </div>
+                
+                <div className="plan-card featured">
+                  <div className="plan-badge">Recomendado</div>
+                  <div className="plan-header">
                     <h4>Plan Pro</h4>
                     <div className="plan-price">$19.99/mes</div>
-                    <ul>
-                      <li>✅ 20 Licencias</li>
-                      <li>✅ Soporte premium 24/7</li>
-                      <li>✅ Encriptación avanzada</li>
-                      <li>✅ 6 Conexiones Simultáneas</li>
-                      <li>✅ Soporte prioritario</li>
-                      <li>✅ Todas las funciones</li>
-                    </ul>
                   </div>
+                  <ul className="plan-features">
+                    <li>✅ 6 Conexiones Simultáneas</li>
+                    <li>✅ Hasta 20 Licencias</li>
+                    <li>✅ Soporte Premium 24/7</li>
+                    <li>✅ Encriptación Avanzada</li>
+                    <li>✅ Soporte Prioritario</li>
+                    <li>✅ Todas las Funciones</li>
+                  </ul>
+                  <button 
+                    className="plan-select-btn primary"
+                    onClick={() => handleUpgradePlan('pro')}
+                  >
+                    Elegir Pro
+                  </button>
                 </div>
+              </div>
               
               <div className="modal-actions">
-                <button className="upgrade-now-btn">
-                  💳 Actualizar Plan Ahora
-                </button>
                 <button onClick={closeUpgradeModal} className="cancel-btn">
                   Cerrar
                 </button>
@@ -231,7 +251,20 @@ const Dashboard = () => {
               <span>GrapeAssist</span>
             </div>
             <div className="dashboard-user">
-              <span>Hola, {user.name}</span>
+              <div className="user-plan-info">
+                <span className="welcome-text">Hola, {user.name}</span>
+                <span className={`plan-badge ${user.planType}`}>
+                  Plan: {user.planType.toUpperCase()}
+                </span>
+                {(user.planType === 'demo' || user.planType === 'basic') && (
+                  <button 
+                    className="improve-plan-btn"
+                    onClick={() => setShowUpgradeModal(true)}
+                  >
+                    Mejorar Plan
+                  </button>
+                )}
+              </div>
               <button onClick={logout} className="btn-logout">
                 Cerrar Sesión
               </button>
@@ -256,6 +289,14 @@ const Dashboard = () => {
                     <>Conexiones activas: {userLimits.activeConnections || 0}</>
                   )}
                 </span>
+              )}
+              {(user.planType === 'demo' || user.planType === 'basic') && (
+                <button 
+                  className="improve-plan-btn secondary"
+                  onClick={() => setShowUpgradeModal(true)}
+                >
+                  Mejorar Plan
+                </button>
               )}
             </div>
           </div>
@@ -308,17 +349,17 @@ const Dashboard = () => {
                           </div>
                           <div className="limit-content">
                             <p>Actualiza tu plan para continuar brindando asistencia:</p>
-                        <ul>
-                          <li>✅ Hasta 10 licencias (Básico) o 20 licencias (Pro)</li>
-                          <li>✅ Soporte {userLimits.planType === 'demo' ? 'básico' : 'premium 24/7'}</li>
-                          <li>✅ Encriptación {userLimits.planType === 'demo' ? 'estándar' : 'avanzada'}</li>
-                          <li>✅ {userLimits.planType === 'demo' ? '3' : '6'} Conexiones Simultáneas</li>
-                        </ul>
+                            <ul>
+                              <li>✅ Hasta 10 licencias (Básico) o 20 licencias (Pro)</li>
+                              <li>✅ Soporte {userLimits.planType === 'demo' ? 'básico' : 'premium 24/7'}</li>
+                              <li>✅ Encriptación {userLimits.planType === 'demo' ? 'estándar' : 'avanzada'}</li>
+                              <li>✅ {userLimits.planType === 'demo' ? '3' : '6'} Conexiones Simultáneas</li>
+                            </ul>
                             <button 
                               className="upgrade-btn"
                               onClick={() => setShowUpgradeModal(true)}
                             >
-                              Actualizar Plan
+                              Mejorar Plan
                             </button>
                           </div>
                         </div>
