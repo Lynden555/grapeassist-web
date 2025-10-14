@@ -59,24 +59,10 @@ const VideoWithOverlay = ({
           border: "2px solid #143a66",
           display: status === "connected" ? "block" : "none",
           backgroundColor: "#000",
-          cursor: 'none',
+          cursor: controlEnabled ? 'default' : 'default', // ✅ CRÍTICO: CURSOR NORMAL
           objectFit: 'contain'
         }}
       />
-
-       // AÑADE ESTO EN VideoWithOverlay.js DESPUÉS DEL VIDEO:
-{controlEnabled && (
-  <div style={{
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    cursor: 'none',  // 🆕 ESTO OCULTA EL CURSOR SOBRE EL VIDEO
-    pointerEvents: 'none',
-    zIndex: 999
-  }} />
-)}
       
       {/* 🗑️ ELIMINAR TODO EL OVERLAY DEL CURSOR */}
       
