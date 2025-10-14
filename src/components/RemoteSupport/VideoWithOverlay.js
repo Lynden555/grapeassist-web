@@ -1,22 +1,39 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 
 const VideoWithOverlay = ({ 
   videoRef, 
-  stream, // ← ESTA PROP FALTABA
+  stream,
   isFullView, 
   status, 
   controlEnabled, 
   screenResolution, 
-  videoDimensions 
+  videoDimensions
+  // 🗑️ ELIMINAR: remoteCursor prop
 }) => {
-  const [showDebug, setShowDebug] = useState(false);
   const internalVideoRef = useRef(null);
-  
-  // Usar la ref proporcionada o la interna
   const currentVideoRef = videoRef || internalVideoRef;
 
-  // SINCRONIZAR STREAM CON EL VIDEO - ESTO FALTABA
+  // 🎯 CRÍTICO: CURSOR NORMAL CUANDO HAY CONTROL
+  useEffect(() => {
+    const videoElement = currentVideoRef.current;
+    if (!videoElement) return;
+
+    if (controlEnabled) {
+      // ✅ CURSOR NORMAL - NO CROSSHAIR, NO OVERLAY
+      videoElement.style.cursor = 'default';
+    } else {
+      videoElement.style.cursor = 'default';
+    }
+
+    return () => {
+      if (videoElement) {
+        videoElement.style.cursor = 'default';
+      }
+    };
+  }, [controlEnabled, currentVideoRef]);
+
+  // SINCRONIZAR STREAM CON EL VIDEO
   useEffect(() => {
     if (currentVideoRef.current && stream) {
       currentVideoRef.current.srcObject = stream;
@@ -24,7 +41,12 @@ const VideoWithOverlay = ({
   }, [stream, currentVideoRef]);
   
   return (
-    <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+    <Box sx={{ 
+      position: 'relative', 
+      width: '100%', 
+      height: '100%',
+      cursor: controlEnabled ? 'default' : 'default' // ✅ SIEMPRE CURSOR NORMAL
+    }}>
       <video
         ref={currentVideoRef}
         autoPlay
@@ -37,11 +59,27 @@ const VideoWithOverlay = ({
           border: "2px solid #143a66",
           display: status === "connected" ? "block" : "none",
           backgroundColor: "#000",
-          cursor: controlEnabled ? 'crosshair' : 'default',
+          cursor: 'none',
+          cursor: controlEnabled ? 'default' : 'default', // ✅ CRÍTICO: CURSOR NORMAL
           objectFit: 'contain'
         }}
-        onDoubleClick={() => setShowDebug(!showDebug)}
       />
+
+       // AÑADE ESTO EN VideoWithOverlay.js DESPUÉS DEL VIDEO:
+{controlEnabled && (
+  <div style={{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    cursor: 'none',  // 🆕 ESTO OCULTA EL CURSOR SOBRE EL VIDEO
+    pointerEvents: 'none',
+    zIndex: 999
+  }} />
+)}
+      
+      {/* 🗑️ ELIMINAR TODO EL OVERLAY DEL CURSOR */}
       
       {status === "connected" && (
         <Box sx={{ 

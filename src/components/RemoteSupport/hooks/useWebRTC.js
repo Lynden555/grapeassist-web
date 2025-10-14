@@ -6,7 +6,7 @@ const RTC_CONFIG = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun.twilio.com:3478" }
-  ],
+  ]
 };
 
 export const useWebRTC = () => {
@@ -24,7 +24,7 @@ export const useWebRTC = () => {
     console.log(txt);
   }, []);
 
-  // ---------- WEBRTC (TU FLUJO ORIGINAL) ----------
+  // ---------- WEBRTC (CONFIGURACIÓN ORIGINAL) ----------
   const initPeerConnection = useCallback(() => {
     if (pcRef.current) {
       try { pcRef.current.close(); } catch {}
@@ -94,7 +94,7 @@ export const useWebRTC = () => {
     return pc;
   }, [log]);
 
-  // ---------- WEBSOCKET (TU FLUJO ORIGINAL) ----------
+  // ---------- WEBSOCKET (FLUJO ORIGINAL) ----------
   const ensureWebSocket = useCallback(() => {
     if (wsRef.current) {
       try { wsRef.current.close(); } catch {}
@@ -103,7 +103,6 @@ export const useWebRTC = () => {
     log("📡 Conectando al servidor...");
     const ws = new WebSocket(SIGNALING_URL);
 
-    // 🆕 MOVIDO DENTRO: handleOffer
     const handleOffer = async (offer) => {
       if (!pcRef.current) {
         log("❌ Conexión WebRTC no inicializada");
@@ -115,9 +114,10 @@ export const useWebRTC = () => {
         await pcRef.current.setRemoteDescription(new RTCSessionDescription(offer));
         log("✅ Oferta establecida - Creando respuesta...");
 
+        // ✅ CONFIGURACIÓN ORIGINAL DEL DATA CHANNEL
         const dataChannel = pcRef.current.createDataChannel('remoteControl', {
-          ordered: true,
-          maxPacketLifeTime: 3000
+          ordered: true,           // ✅ ORDENADO
+          maxPacketLifeTime: 3000  // ✅ 3000ms
         });
 
         dataChannelRef.current = dataChannel;
@@ -152,6 +152,7 @@ export const useWebRTC = () => {
           }
         };
 
+        // ✅ CREATEANSWER SIN PARÁMETROS (ORIGINAL)
         const answer = await pcRef.current.createAnswer();
         await pcRef.current.setLocalDescription(answer);
 
@@ -170,7 +171,6 @@ export const useWebRTC = () => {
       }
     };
 
-    // 🆕 MOVIDO DENTRO: handleSignalingMessage
     const handleSignalingMessage = async (data) => {
       try {
         switch (data.type) {
@@ -192,7 +192,6 @@ export const useWebRTC = () => {
             if (data.candidate && pcRef.current && data.role === "agent") {
               try {
                 await pcRef.current.addIceCandidate(data.candidate);
-                
               } catch (err) {
                 console.warn("Error añadiendo ICE candidate:", err);
               }
@@ -248,7 +247,7 @@ export const useWebRTC = () => {
     wsRef.current = ws;
   }, [log]);
 
-  // ---------- CONEXIÓN CON LICENCIAS ----------
+  // ---------- CONEXIÓN CON LICENCIAS (ORIGINAL) ----------
   const connectToSession = useCallback(async (code, userId) => {
     if (!code.trim()) {
       log("❌ Ingresa un código de sesión");
@@ -261,7 +260,6 @@ export const useWebRTC = () => {
       setStatus("pending");
       log("🔗 Validando sesión...");
 
-      // Verificar límites primero
       let userData = null;
       if (userId) {
         const limitsResponse = await fetch(`${API_BASE}/user/limits/${userId}`);
@@ -270,7 +268,6 @@ export const useWebRTC = () => {
         if (limitsData.ok) {
           userData = limitsData.user;
           
-          // Verificar si puede crear más conexiones
           const canConnect = (() => {
             switch (userData.planType) {
               case 'demo':
@@ -339,7 +336,6 @@ export const useWebRTC = () => {
       }
     }
 
-    // Decrementar contador
     if (userId) {
       try {
         await fetch(`${API_BASE}/user/decrement-connection`, {
@@ -362,7 +358,7 @@ export const useWebRTC = () => {
     log(`🔌 Sesión cerrada`);
   }, [log]);
 
-  // Enviar comando por Data Channel
+  // Enviar comando por Data Channel (ORIGINAL)
   const sendCommand = useCallback((command) => {
     if (dataChannelRef.current && dataChannelRef.current.readyState === 'open') {
       try {

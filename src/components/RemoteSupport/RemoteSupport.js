@@ -390,10 +390,10 @@ const RemoteSupport = () => {
                 className={controlEnabled ? "control-active" : "control-inactive"}
                 size="small"
               />
+
             </div>
             
             <div className="controls-right">
-              {/* ❌ ELIMINADO: Botón "Salir de Vista Completa" */}
               <Button
                 variant="contained"
                 onClick={handleClose}
