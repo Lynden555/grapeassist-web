@@ -59,7 +59,7 @@ const VideoWithOverlay = ({
           border: "2px solid #143a66",
           display: status === "connected" ? "block" : "none",
           backgroundColor: "#000",
-          cursor: controlEnabled ? 'default' : 'default', // ✅ CRÍTICO: CURSOR NORMAL
+          cursor: 'none',
           objectFit: 'contain'
         }}
       />
